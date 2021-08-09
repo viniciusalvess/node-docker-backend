@@ -118,5 +118,6 @@ dist
 .docker
 
 volume/mongo-data
+db_data
 
 **/.DS_Store
