@@ -1,0 +1,41 @@
+version: "3.3"
+
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306
+    security_opt:
+      - seccomp:unconfined
+    volumes: 
+      - ./db-init:/docker-entrypoint-initdb.d
+      - ./db_data:/var/lib/mysql:rw
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  node-docker-backend:
+    container_name: node-docker-backend
+    image: viniciusalvess/node-docker-backend
+    restart: always
+    ports:
+      - 3000:3000
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+    links:
+      - db
+    depends_on:
+      - db
+    command: sh -c "npm run prod"
+
+    
